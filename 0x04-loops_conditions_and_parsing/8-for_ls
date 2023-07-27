@@ -3,10 +3,10 @@
 # where only the part of the name after the first dash is displayed.
 
 for file in *; do
-    if [ -f "$file" ] && [[ "$file" == -* ]]; then
-        # If the file is a regular file and starts with a dash
+    if [ -f "$file" ] && [[ "$file" == *-* ]]; then
+        # If the file is a regular file and contains a dash in the name
         # Display the part of the name after the first dash
-        echo "Found file: $file"
-        echo "Extracted name: ${file#*-}"
+        echo "${file#*-}"
     fi
 done
+

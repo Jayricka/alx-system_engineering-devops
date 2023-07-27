@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Read the /etc/passwd file line by line using a while loop
+while IFS=: read -r username _ userid _ homedir _; do
+    # Display the extracted fields in the desired format
+    echo "$username:$userid:$homedir"
+done </etc/passwd

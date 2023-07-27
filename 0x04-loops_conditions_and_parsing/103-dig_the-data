@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Use awk to count occurrences of each combination of IP (1st field) and HTTP status code (9th field) in the apache-access.log file
+# Then sort the data in descending order based on the occurrence number
+awk '{count[$1" "$9]++} END {for (key in count) print count[key], key}' apache-access.log | sort -nr
+
