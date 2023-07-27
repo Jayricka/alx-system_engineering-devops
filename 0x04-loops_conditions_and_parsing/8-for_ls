@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# This script displays the content of the current directory in a list format where only the part of the name after the first dash is displayed.
+# This script displays the content of the current directory in a list format,
+# where only the part of the name after the first dash is displayed.
 
 for file in *; do
-    if [[ -f $file && $file != .* && $file == *-* ]]; then
-        echo "${file#*-}"
+    if [ -f "$file" ] && [[ "$file" == -* ]]; then
+        # If the file is a regular file and starts with a dash
+        # Display the part of the name after the first dash
+        echo "Found file: $file"
+        echo "Extracted name: ${file#*-}"
     fi
 done
