@@ -2,5 +2,9 @@
 # This script kills the "7-highlander" process using pkill.
 
 # Find and stop the "7-highlander" process using pkill
-pkill -f "7-highlander"
+pkill -f "7-highlander" && echo "To infinity and beyond
+To infinity and beyond
+To infinity and beyond
+To infinity and beyond
+Killed"
 
