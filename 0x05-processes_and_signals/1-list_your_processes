@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# This script displays a list of currently running processes with process hierarchy.
+
+# Using ps command to display process information
+# -e: select all processes
+# -o: customize the output format
+# user: the user who owns the process
+# pid: process ID
+# %cpu: CPU usage percentage
+# %mem: Memory usage percentage
+# vsz: Virtual memory size
+# rss: Resident set size (physical memory used)
+# tty: Terminal type
+# stat: Process status (e.g., S = sleeping, R = running, Z = zombie)
+# start: Start time of the process
+# time: Total CPU time consumed by the process
+# command: The command used to start the process
+ps -eo user,pid,%cpu,%mem,vsz,rss,tty,stat,start,time,command | head -50
+
