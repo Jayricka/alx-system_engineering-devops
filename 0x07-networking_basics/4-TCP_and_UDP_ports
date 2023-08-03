@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Display listening ports along with their corresponding PID and program name.
+
+# Check if the script is run with root/sudo privileges
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script requires root privileges. Please run it with sudo."
+  exit 1
+fi
+
+# Get the listening TCP ports along with the PID and program name
+echo "Active Internet connections (only servers)"
+echo "Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name"
+netstat -tuln | awk '$1 ~ /^tcp/ {print $1, $4, $NF}' | while read -r proto local foreign pid_prog; do
+  pid_prog=$(echo "$pid_prog" | awk -F '/' '{print $1}')
+  program=$(ps -p "$pid_prog" -o comm=)
+  echo "$proto        $local           $foreign         $pid_prog/$program"
+done
+
+# Get the listening UDP ports along with the PID and program name
+netstat -ulan | awk '$1 ~ /^udp/ {print $1, $4, $NF}' | while read -r proto local foreign pid_prog; do
+  pid_prog=$(echo "$pid_prog" | awk -F '/' '{print $1}')
+  program=$(ps -p "$pid_prog" -o comm=)
+  echo "$proto        $local           $foreign                         $pid_prog/$program"
+done
+
+# Get the listening UNIX domain sockets along with the PID and program name
+echo "Active UNIX domain sockets (only servers)"
+echo "Proto RefCnt Flags       Type       State         I-Node   PID/Program name    Path"
+netstat -lxn | awk '$1 ~ /^unix/ {print $1, $8, $9}' | while read -r proto refcnt flags type state inode pid_prog path; do
+  pid_prog=$(echo "$pid_prog" | awk -F '/' '{print $1}')
+  program=$(ps -p "$pid_prog" -o comm=)
+  echo "$proto $refcnt $flags $type $state $inode    $pid_prog/$program    $path"
+done
+
