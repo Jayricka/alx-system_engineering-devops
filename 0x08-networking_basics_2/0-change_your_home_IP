@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Change IP resolution for localhost and facebook.com.
+
+# Check if the script is run with root/sudo privileges
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script requires root privileges. Please run it with sudo."
+  exit 1
+fi
+
+# Edit the hosts file to change IP resolutions
+echo "127.0.0.2 localhost" | sudo tee -a /etc/hosts
+echo "8.8.8.8 facebook.com" | sudo tee -a /etc/hosts
+
+# Flush the DNS cache to apply the changes
+if command -v systemd-resolve &>/dev/null; then
+  sudo systemd-resolve --flush-caches
+else
+  sudo /etc/init.d/dns-clean start
+fi
+

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Display all active IPv4 IPs on the machine.
+
+# Use 'ip' command to get the network information and filter only IPv4 addresses
+ip -4 a | awk '/inet/ {print $2}' | cut -d '/' -f 1
+
