@@ -1,5 +1,6 @@
-exec { 'kill_killmenow':
-  command     => 'sudo pkill -f killmenow',
-  path        => ['/bin', '/usr/bin'],
-  refreshonly => true,
+# kill process killmenow
+
+exec { 'pkill':
+  command  => 'pkill killmenow',
+  provider => 'shell',
 }
