@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# This script configures the SSH client to use the private key ~/.ssh/school
+# and refuse password authentication
+
+# Define the SSH client configuration file path
+ssh_config_file="$HOME/.ssh/config"
+
+# Check if the SSH configuration file already exists
+if [ -f "$ssh_config_file" ]; then
+    echo "SSH client configuration file already exists. Appending the necessary settings."
+else
+    echo "Creating a new SSH client configuration file."
+fi
+
+# Add or update the SSH client configuration settings
+cat >> "$ssh_config_file" <<EOF
+Host your_server_hostname_or_IP
+    IdentityFile ~/.ssh/school
+    PasswordAuthentication no
+EOF
+
+echo "SSH client configuration has been updated."
+
+# Secure the configuration file permissions
+chmod 600 "$ssh_config_file"
