@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# This script configures Nginx for redirection to another page with a "301 Moved Permanently" response.
+
+# Check if the script is running as root
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as root using sudo."
+    exit 1
+fi
+
+# Install Nginx if not already installed
+if ! [ -x "$(command -v nginx)" ]; then
+  apt-get -y update
+  apt-get -y install nginx
+fi
+
+# Create a configuration file for the redirection
+echo "server {
+    listen 80;
+    listen [::]:80;
+    server_name _;
+
+    location /redirect_me {
+        return 301 https://www.linkedin.com/in/rikagachanja/;
+    }
+
+    location / {
+        return 404;
+    }
+}" > /etc/nginx/sites-available/redirect
+
+# Create a symbolic link to enable the configuration
+ln -sf /etc/nginx/sites-available/redirect /etc/nginx/sites-enabled/
+
+# Remove the default Nginx configuration if it exists
+rm -f /etc/nginx/sites-enabled/default
+
+# Test Nginx configuration for syntax errors
+nginx -t
+
+# Reload Nginx to apply the changes
+systemctl reload nginx
+
+echo "Nginx configuration for redirection has been updated."
