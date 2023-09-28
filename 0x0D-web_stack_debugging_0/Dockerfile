@@ -1,4 +1,6 @@
-FROM nginx:latest
+# Use the official Apache image as the base image
+FROM httpd:latest
 
-COPY index.html /usr/share/nginx/html/
+# Copy your custom HTML file to the Apache document root
+COPY index.html /usr/local/apache2/htdocs/
 
