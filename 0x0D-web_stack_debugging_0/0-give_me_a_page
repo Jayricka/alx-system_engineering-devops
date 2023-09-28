@@ -1,3 +1,27 @@
 #!/usr/bin/env bash
-# get Apache to run on the container and to return a page containing Hello Holberton when querying the root of it.
+
+# Start a Docker container with Apache and map port 8080 to port 80
+docker run -p 8080:80 -d -it holbertonschool/265-0
+
+# Check if Apache is running inside the container
+docker ps
+
+# Access the container
+docker exec -it 39fdb4729d83 /bin/bash  # Replace with your actual Container ID
+
+# Start Apache inside the container
 service apache2 start
+
+# Check Apache's status
+service apache2 status
+
+# Install curl inside the container
+apt-get update
+apt-get install -y curl
+
+# Test Apache to ensure it serves the expected page
+curl localhost
+
+# Exit the container
+exit
+

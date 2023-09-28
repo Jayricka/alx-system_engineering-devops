@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-# Start Apache and serve Hello Holberton
-docker exec -it tender_napier service apache2 start
-docker exec -it tender_napier apt-get update
-docker exec -it tender_napier apt-get install -y curl
-docker exec -it tender_napier curl localhost
-
