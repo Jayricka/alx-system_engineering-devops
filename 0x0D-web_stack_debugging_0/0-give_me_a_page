@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# This script starts a Docker container with Apache and serves a web page.
 
 # Start a Docker container with Apache and map port 8080 to port 80
 docker run -p 8080:80 -d -it holbertonschool/265-0
