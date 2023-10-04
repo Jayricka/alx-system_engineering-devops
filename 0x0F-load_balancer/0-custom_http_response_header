@@ -7,7 +7,7 @@ if ! [ -x "$(command -v nginx)" ]; then
     sudo apt-get install -y nginx
 fi
 
-CUSTOM_HEADER="X-Served-By: $(hostname)"
+CUSTOM_HEADER="X-Served-By $(hostname)"
 
 echo "server {
     listen 80 default_server;
