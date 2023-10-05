@@ -1,31 +1,8 @@
 #!/usr/bin/env bash
-# This script configures Nginx and adds a custom HTTP response header on a new Ubuntu machine.
-
-sudo apt-get update
-
-if ! [ -x "$(command -v nginx)" ]; then
-    sudo apt-get install -y nginx
-fi
-
-CUSTOM_HEADER="X-Served-By: $(hostname)"
-
-echo "server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name _;
-
-    location / {
-        add_header $CUSTOM_HEADER;
-        root /var/www/html;
-        index index.html;
-    }
-}" | sudo tee /etc/nginx/sites-available/custom-header
-
-sudo ln -s /etc/nginx/sites-available/custom-header /etc/nginx/sites-enabled/
-
-sudo rm /etc/nginx/sites-enabled/default
-
-sudo nginx -t
-
-sudo systemctl reload nginx
-
+# Script that configures Nginx server with a custom header
+apt-get -y update
+apt-get -y install nginx
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+echo "Ceci n'est pas une page" > /usr/share/nginx/html/custom_404.html
+sed -i "s/server_name _;/server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\Jayricka/ permanent;\n\n\terror_page 404 \/custom_404.html;\n\tlocation = \/custom_404.html {\n\t\troot \/usr\/share\/nginx\/html;\n\t\tinternal;\n\t}/" /etc/nginx/sites-available/default sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOSTNAME\";/" /etc/nginx/nginx.conf
+service nginx start
