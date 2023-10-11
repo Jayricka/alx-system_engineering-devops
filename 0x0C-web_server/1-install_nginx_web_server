@@ -1,21 +1,8 @@
 #!/usr/bin/env bash
-# script installs Nginx configures it to return "Hello World!" on the root URL.
+# installs nginx and configures it on a remote server
 
-apt-get update
+apt-get -y update
 apt-get -y install nginx
-
-# Create a simple HTML page with "Hello World!" and a newline character
-echo -e "<html>\n<head>\n</head>\n<body>\nHello World!\n</body>\n</html>" > /var/www/html/index.html
-
-# Configure Nginx to return "Hello World!" with a newline character
-sed -i '/listen \[::\]:80 default_server/a location / {\n    add_header Content-Type text/plain;\n    return 200 "Hello World!\\n";\n}' /etc/nginx/sites-available/default
-
-# Restart Nginx without using systemctl
-kill -HUP "$(cat /var/run/nginx.pid)"
-
-# Test Nginx with curl
-curl localhost
-
-# Add a newline for formatting
-echo
-
+ufw allow 'Nginx HTTP'
+echo 'Hello World!' > /var/www/html/index.nginx-debian.html
+service nginx start
