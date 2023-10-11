@@ -1,43 +1,38 @@
 #!/usr/bin/env bash
-# This script configures Nginx for redirection to another page with a "301 Moved Permanently" response.
-
-# Check if the script is running as root
-if [ "$EUID" -ne 0 ]; then
-    echo "Please run this script as root using sudo."
-    exit 1
-fi
 
 # Install Nginx if not already installed
-if ! [ -x "$(command -v nginx)" ]; then
-  apt-get -y update
-  apt-get -y install nginx
+if ! command -v nginx &> /dev/null
+then
+    sudo apt-get update
+    sudo apt-get install -y nginx
 fi
 
-# Create a configuration file for the redirection
+# Create a configuration file for redirection
 echo "server {
-    listen 80;
-    listen [::]:80;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
     server_name _;
 
     location /redirect_me {
-        return 301 https://www.linkedin.com/in/rikagachanja/;
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
 
     location / {
-        return 404;
+        root /var/www/html;
+        index index.html index.htm;
     }
-}" > /etc/nginx/sites-available/redirect
+}" | sudo tee /etc/nginx/sites-available/redirect_me > /dev/null
 
-# Create a symbolic link to enable the configuration
-ln -sf /etc/nginx/sites-available/redirect /etc/nginx/sites-enabled/
+# Create a symbolic link to enable the site
+sudo ln -s /etc/nginx/sites-available/redirect_me /etc/nginx/sites-enabled/
 
-# Remove the default Nginx configuration if it exists
-rm -f /etc/nginx/sites-enabled/default
+# Remove the default site configuration
+sudo rm -f /etc/nginx/sites-enabled/default
 
-# Test Nginx configuration for syntax errors
-nginx -t
+# Test the Nginx configuration
+sudo nginx -t
 
-# Reload Nginx to apply the changes
-systemctl reload nginx
+# Reload Nginx to apply changes
+sudo systemctl reload nginx
 
-echo "Nginx configuration for redirection has been updated."
