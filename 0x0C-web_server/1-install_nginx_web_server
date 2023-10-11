@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# This script installs Nginx and configures it to return "Hello World!" on the root URL.
+# script installs Nginx configures it to return "Hello World!" on the root URL.
 
 apt-get update
 apt-get -y install nginx
@@ -18,3 +18,4 @@ curl localhost
 
 # Add a newline for formatting
 echo
+
