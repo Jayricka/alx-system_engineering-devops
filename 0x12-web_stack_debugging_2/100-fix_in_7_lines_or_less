@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Configure Nginx to run as the nginx user and listen on port 8080
+
+sed -i 's/user  nginx;/user  nginx nginx;/' /etc/nginx/nginx.conf
+sed -i 's/listen       80;/listen       8080;/' /etc/nginx/sites-available/default
+ps auxff | grep "nginx: master" | awk '{print $1}' | xargs kill
+nginx
