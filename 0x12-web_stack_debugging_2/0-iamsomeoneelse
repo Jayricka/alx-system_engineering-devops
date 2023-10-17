@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# This script runs the 'whoami' command as another user.
+
+# Check if a username is provided as an argument
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <username>"
+  exit 1
+fi
+
+# Get the username from the argument
+username="$1"
+
+# Store the current user
+original_user=$(whoami)
+
+# Run the 'whoami' command as the specified user
+sudo -u "$username" whoami
+
+# Return to the original user
+sudo -u "$original_user" whoami
