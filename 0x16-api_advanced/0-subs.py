@@ -1,24 +1,12 @@
 #!/usr/bin/python3
-"""
-0-subs
-"""
+"""0-subs"""
 
 import requests
 
 def number_of_subscribers(subreddit):
-    """
-    Queries the Reddit API and returns the number of subscribers for a given subreddit.
-
-    Args:
-        subreddit (str): The name of the subreddit.
-
-    Returns:
-        int: The number of subscribers. If the subreddit is not valid, returns 0.
-    """
+    """Queries the Reddit API and returns the number of subscribers for a given subreddit."""
     url = f"https://www.reddit.com/r/{subreddit}/about.json"
-    
     headers = {'User-Agent': 'CustomUserAgent/1.0'}
-    
     response = requests.get(url, headers=headers)
     
     if response.status_code == 200:
