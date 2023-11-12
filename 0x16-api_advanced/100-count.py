@@ -27,7 +27,6 @@ def count_words(subreddit, word_list, after=None, counts=None):
         children = data.get('children', [])
 
         if not children:
-            print(f"No hot posts found in the subreddit: {subreddit}")
             return
 
         for child in children:
@@ -45,15 +44,18 @@ def count_words(subreddit, word_list, after=None, counts=None):
         else:
             print_results(counts)
 
+    elif response.status_code == 404:
+        pass  # Do nothing for invalid subreddit
+
     else:
-        print(f"Error: {response.status_code}. "
-              f"Invalid subreddit or no posts match.")
+        pass  # Do nothing for other errors
 
 
 def print_results(counts):
     sorted_counts = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
     for word, count in sorted_counts:
-        print(f"{word}: {count}")
+        if count > 0:
+            print(f"{word}: {count}")
 
 
 if __name__ == '__main__':
