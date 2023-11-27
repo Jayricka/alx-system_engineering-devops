@@ -1,21 +1,31 @@
 #!/usr/bin/env bash
-# script configures Nginx to perform a 301 redirection for /redirect_me.
+#bash redirection
 
-if ! dpkg -l | grep nginx; then
-    apt-get update
-    apt-get -y install nginx
-fi
-echo 'server {
-    listen 80;
+sudo apt-get update
+sudo apt-get install -y nginx
+
+echo "Redirecting to https://www.youtube.com/watch?v=QH2-TGUlwu4" | sudo tee /var/www/html/redirect_me.html > /dev/null
+
+sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html redirect_me.html;
+
     server_name _;
 
     location /redirect_me {
         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
-}' > /etc/nginx/sites-available/redirect
-ln -s /etc/nginx/sites-available/redirect /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-service nginx restart
 
-echo "Nginx configured for redirection. Test by accessing /redirect_me."
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
 
+sudo /etc/init.d/nginx restart
+
+echo "Nginx has been configured for redirection. /redirect_me will now redirect to https://www.youtube.com/watch?v=QH2-TGUlwu4"
