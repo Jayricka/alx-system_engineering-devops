@@ -27,5 +27,3 @@ server {
 EOF
 
 sudo /etc/init.d/nginx restart
-
-echo "Nginx has been configured for redirection. /redirect_me will now redirect to https://www.youtube.com/watch?v=QH2-TGUlwu4"
