@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
 # Purpose: Install and configure Nginx to add a custom header to HTTP responses.
 
-if ! command -v nginx &> /dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y nginx
-fi
+sudo apt-get update
+sudo apt-get install -y nginx
+
+SERVER_HOSTNAME="default-hostname"
 
 if [ "$(hostname)" = "249200-web-01" ]; then
     SERVER_HOSTNAME="249200-web-01"
 elif [ "$(hostname)" = "249200-web-02" ]; then
     SERVER_HOSTNAME="249200-web-02"
-else
-    SERVER_HOSTNAME="default-hostname"
 fi
 
 sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
@@ -26,13 +24,10 @@ server {
 
     location / {
         try_files \$uri \$uri/ =404;
-        add_header X-Served-By \$hostname;
+        add_header X-Served-By $SERVER_HOSTNAME;
     }
 }
 EOF
 
-if [ ! -e /etc/nginx/sites-enabled/default ]; then
-    sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
-fi
-
-sudo /etc/init.d/nginx restart
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+sudo service nginx restart
