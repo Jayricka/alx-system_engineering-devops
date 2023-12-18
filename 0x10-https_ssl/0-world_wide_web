@@ -29,11 +29,12 @@ query_dns() {
 # Add subdomains and display information based on arguments provided
 if [ -z "$subdomain" ]; then
     # Display information for default subdomains
-    query_dns www
-    query_dns lb-01
-    query_dns web-01
-    query_dns web-02
+    query_dns www 52.23.213.20
+    query_dns lb-01 52.23.213.20
+    query_dns web-01 100.25.118.17
+    query_dns web-02 54.160.79.1
 else
     # Display information for the specified subdomain
     query_dns "$subdomain"
 fi
+
