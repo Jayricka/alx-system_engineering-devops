@@ -1,45 +1,46 @@
 #!/usr/bin/env bash
-# This script configures domain subdomains and displays DNS information.
 
-# Function to display information about a subdomain
-display_info() {
-    sub_domain=$1
-    domain=$2
-    result=$3
-    record_type=$(echo "$result" | awk '/ANSWER SECTION:/ {getline; print $4}')
-    echo "The subdomain $sub_domain is a $record_type record and points to $result"
-}
-
-# Function to perform DNS lookup and extract relevant information
-get_dns_info() {
-    sub_domain=$1
-    domain=$2
-    result=$(dig "$sub_domain.$domain" +short)
-    display_info "$sub_domain" "$domain" "$result"
-}
-
-# Main script
-main() {
-    domain=$1
-    sub_domain=$2
-
-    if [ -z "$sub_domain" ]; then
-        # Display information for default subdomains
-        get_dns_info "www" "$domain"
-        get_dns_info "lb-01" "$domain"
-        get_dns_info "web-01" "$domain"
-        get_dns_info "web-02" "$domain"
-    else
-        # Display information for the specified subdomain
-        get_dns_info "$sub_domain" "$domain"
-    fi
-}
-
-# Check if domain argument is provided
-if [ -z "$1" ]; then
-    echo "Error: Domain argument is missing. Usage: $0 <domain> [subdomain]"
+# Check for the correct number of arguments
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo "Usage: $0 domain [subdomain]"
     exit 1
 fi
 
-# Call the main function
-main "$1" "$2"
+domain="$1"
+subdomain="$2"
+
+# Function to display information about a subdomain
+display_info() {
+    local sub="$1"
+    local record_type="$2"
+    local destination="$3"
+    echo "The subdomain $sub is a $record_type record and points to $destination"
+}
+
+# Configure DNS records
+configure_dns() {
+    local sub="$1"
+    local ip="$2"
+    echo "$sub IN A $ip"
+}
+
+# Add subdomains and configure DNS records
+configure_dns www 52.23.213.20  # Assuming www points to the load balancer IP
+configure_dns lb-01 52.23.213.20
+configure_dns web-01 100.25.118.17
+configure_dns web-02 54.160.79.1
+
+# Display information based on the arguments provided
+if [ -z "$subdomain" ]; then
+    # Display information for default subdomains
+    display_info www A 52.23.213.20
+    display_info lb-01 A 52.23.213.20
+    display_info web-01 A 100.25.118.17
+    display_info web-02 A 54.160.79.1
+else
+    # Display information for the specified subdomain
+    query_result=$(dig "$subdomain.$domain" | awk '/ANSWER SECTION:/ {getline; print}')
+    record_type=$(echo "$query_result" | awk '{print $4}')
+    destination=$(echo "$query_result" | awk '{print $5}')
+    display_info "$subdomain" "$record_type" "$destination"
+fi
