@@ -20,21 +20,25 @@ display_info() {
 # Function to query DNS and display information
 query_dns() {
     local sub="$1"
-    query_result=$(dig "$sub.$domain" | awk '/ANSWER SECTION:/ {getline; print}')
-    record_type=$(echo "$query_result" | awk '{print $4}')
-    destination=$(echo "$query_result" | awk '{print $5}')
-    display_info "$sub" "$record_type" "$destination"
+    local result
+    result=$(dig +short "$sub.$domain")
+    if [ -n "$result" ]; then
+        local ip
+        ip=$(dig +short "$sub.$domain" | head -n1)
+        display_info "$sub" "A" "$ip"
+    else
+        echo "No record found for $sub.$domain"
+    fi
 }
 
 # Add subdomains and display information based on arguments provided
 if [ -z "$subdomain" ]; then
     # Display information for default subdomains
-    query_dns www 52.23.213.20
-    query_dns lb-01 52.23.213.20
-    query_dns web-01 100.25.118.17
-    query_dns web-02 54.160.79.1
+    query_dns www
+    query_dns lb-01
+    query_dns web-01
+    query_dns web-02
 else
     # Display information for the specified subdomain
     query_dns "$subdomain"
 fi
-
