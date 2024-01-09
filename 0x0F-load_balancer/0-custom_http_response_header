@@ -6,8 +6,6 @@ if ! command -v nginx &> /dev/null; then
     sudo apt-get install -y nginx
 fi
 
-hostname=$(hostname)
-
 nginx_config="/etc/nginx/sites-available/default"
 if [ ! -e "$nginx_config" ]; then
     sudo bash -c "cat > $nginx_config <<EOL
@@ -29,4 +27,4 @@ server {
 }
 EOL"
     sudo service nginx restart
-
+fi
