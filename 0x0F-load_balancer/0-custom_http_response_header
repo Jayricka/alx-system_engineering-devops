@@ -1,31 +1,18 @@
 #!/usr/bin/env bash
-# This script configures Nginx to include a custom HTTP response header.
+# This script configures Nginx to add a custom header to its HTTP response.
 
-if ! command -v nginx &> /dev/null; then
-    sudo apt-get update
-    sudo apt-get install -y nginx
-fi
+# Install Nginx if not already installed
+sudo apt-get update
+sudo apt-get install -y nginx
 
-nginx_config="/etc/nginx/sites-available/default"
-if [ ! -e "$nginx_config" ]; then
-    sudo bash -c "cat > $nginx_config <<EOL
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
+# Get the hostname of the server
+hostname=$(hostname)
 
-    root /var/www/html;
-    index index.html;
+# Create a backup of the default Nginx configuration
+sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default_backup
 
-    location / {
-        try_files \$uri \$uri/ =404;
-        add_header X-Served-By \$hostname;
-    }
+# Configure Nginx to add the custom header
+sudo sed -i '/server_name _;/a \\tadd_header X-Served-By '"$hostname"';' /etc/nginx/sites-available/default
 
-    location /redirect_me {
-        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-    }
-}
-EOL"
-    sudo service nginx restart
-fi
-
+# Restart Nginx to apply changes
+sudo service nginx restart
