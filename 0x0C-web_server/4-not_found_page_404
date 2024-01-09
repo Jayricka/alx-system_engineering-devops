@@ -7,8 +7,10 @@ if ! command -v nginx &> /dev/null; then
     sudo apt-get install -y nginx
 fi
 
+# Create a file for the custom 404 HTML content
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
 
+# Configure Nginx to return 404 with the custom page
 sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
 server {
     listen 80 default_server;
@@ -28,4 +30,5 @@ server {
 }
 EOF
 
-sudo /etc/init.d/nginx restart
+# Reload Nginx to apply changes
+sudo service nginx reload
