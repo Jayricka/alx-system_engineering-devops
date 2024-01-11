@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 # Install and configure HAProxy on lb-01 server.
 
-# Install HAProxy
 sudo apt-get update
 sudo apt-get install -y haproxy
 
-# Backup the default HAProxy configuration
 sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg_backup
 
-# Configure HAProxy to send traffic to web-01 and web-02 using roundrobin
 cat <<EOL | sudo tee /etc/haproxy/haproxy.cfg
 global
     daemon
@@ -32,5 +29,4 @@ backend web_servers
     server web-02 249200-web-02:80 check
 EOL
 
-# Restart HAProxy to apply changes
 sudo service haproxy restart
