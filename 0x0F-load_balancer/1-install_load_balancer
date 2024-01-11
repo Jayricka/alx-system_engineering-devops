@@ -4,8 +4,6 @@
 sudo apt-get update
 sudo apt-get install -y haproxy
 
-sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg_backup
-
 cat <<EOL | sudo tee /etc/haproxy/haproxy.cfg
 global
     daemon
