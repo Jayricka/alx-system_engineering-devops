@@ -28,3 +28,4 @@ backend web_servers
 EOL
 
 sudo service haproxy restart
+
