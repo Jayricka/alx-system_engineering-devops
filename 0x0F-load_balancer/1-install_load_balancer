@@ -27,5 +27,5 @@ backend web_servers
     server web-02 249200-web-02:80 check
 EOL
 
+sudo systemctl enable haproxy
 sudo service haproxy restart
-
