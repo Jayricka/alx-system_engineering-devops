@@ -1,21 +1,13 @@
 #!/usr/bin/env bash
-# Install and configure HAProxy on lb-01 server.
+# Install and configure HAproxy on lb-01 server
 
 sudo apt-get update
 sudo apt-get install -y haproxy
 
-cat <<EOL | sudo tee /etc/haproxy/haproxy.cfg
-global
-    daemon
-    maxconn 256
+sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup
 
-defaults
-    mode http
-    timeout connect 5000ms
-    timeout client 50000ms
-    timeout server 50000ms
-
-frontend web
+sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<'EOF'
+frontend web_frontend
     bind *:80
     mode http
     default_backend web_servers
@@ -25,7 +17,8 @@ backend web_servers
     balance roundrobin
     server web-01 249200-web-01:80 check
     server web-02 249200-web-02:80 check
-EOL
+EOF
 
-sudo systemctl enable haproxy
+sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+
 sudo service haproxy restart
