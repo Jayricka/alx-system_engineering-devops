@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Install and configure HAproxy on lb-01 server
+# This script installs and configures HAproxy on lb-01 server.
 
 sudo apt-get update
 sudo apt-get install -y haproxy
 
-sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.backup
+web_01_hostname="249200-web-01"
+web_02_hostname="249200-web-02"
 
-sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<'EOF'
+sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg_backup
+
+sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOL
 frontend web_frontend
     bind *:80
     mode http
@@ -15,9 +18,9 @@ frontend web_frontend
 backend web_servers
     mode http
     balance roundrobin
-    server web-01 249200-web-01:80 check
-    server web-02 249200-web-02:80 check
-EOF
+    server web_01 $web_01_hostname:80 check
+    server web_02 $web_02_hostname:80 check
+EOL
 
 sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
 
