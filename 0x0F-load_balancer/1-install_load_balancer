@@ -1,20 +1,48 @@
 #!/usr/bin/env bash
-# This script installs and configures HAproxy on lb-01 server.
+# Script to install and configure HAproxy on lb-01 server.
 
-sudo apt-get update
-sudo apt-get install -y haproxy
+# Exit immediately if a command exits with a non-zero status
+set -e
 
+# Update package list and install HAproxy
+sudo apt-get update && sudo apt-get install -y haproxy
+
+# Define the hostnames of the web servers
 web_01_hostname="249200-web-01"
 web_02_hostname="249200-web-02"
 
+# Backup the current HAproxy configuration
 sudo cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg_backup
 
+# Write the new HAproxy configuration
 sudo tee /etc/haproxy/haproxy.cfg > /dev/null <<EOL
+# Global settings
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+# Default settings
+defaults
+    log     global
+    option  httplog
+    option  dontlognull
+    timeout connect 5000ms
+    timeout client  50000ms
+    timeout server  50000ms
+
+# Frontend configuration
 frontend web_frontend
     bind *:80
     mode http
     default_backend web_servers
 
+# Backend configuration
 backend web_servers
     mode http
     balance roundrobin
@@ -22,6 +50,13 @@ backend web_servers
     server web_02 $web_02_hostname:80 check
 EOL
 
+# Ensure HAproxy is enabled
 sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
 
+# Restart HAproxy to apply the new configuration
 sudo service haproxy restart
+
+# Output status to confirm HAproxy is running
+sudo service haproxy status
+
+echo "HAproxy is configured and running. Load balancing between $web_01_hostname and $web_02_hostname."
