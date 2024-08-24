@@ -26,3 +26,36 @@ This document provides instructions for setting up Datadog monitoring on your se
 1. **Log in to `web-01`:**
    ```bash
    ssh user@web-01
+
+## 3. Create and Configure Datadog Dashboards
+
+### Create a New Dashboard
+
+1. Log in to Datadog.
+2. Navigate to **Dashboards** > **New Dashboard**.
+3. Enter a title for your dashboard and configure its layout.
+
+### Add Widgets to the Dashboard
+
+Add at least 4 widgets. Example widgets include:
+
+- **Time Series Widget:**
+  - Query: `avg:system.disk.read_time{*}`.
+
+- **Top List Widget:**
+  - Query: `top(sum:system.network.in{*}, 10)`.
+
+- **Heatmap Widget:**
+  - Query: `heatmap(avg:system.io.await{*})`.
+
+- **Query Value Widget:**
+  - Query: `sum:system.disk.write_time{*}`.
+
+### Retrieve Dashboard ID
+
+Use the Datadog API to get the dashboard ID:
+
+```bash
+curl -X GET "https://api.datadoghq.com/api/v1/dashboard" \
+    -H "DD-API-KEY: your_api_key_here" \
+    -H "DD-APPLICATION-KEY: your_application_key_here"
